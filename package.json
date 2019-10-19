@@ -1,0 +1,25 @@
+{
+  "name": "cordova.plugin.smartoneprinter",
+  "version": "0.1.0",
+  "description": "This plugin is for ionic 2 and higher apps to print on the smart one all-in-one in-built printer",
+  "cordova": {
+    "id": "cordova.plugin.smartoneprinter",
+    "platforms": [
+      "android"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mukopaje/smart-one-printer.git"
+  },
+  "keywords": [
+    "ecosystem:cordova",
+    "cordova-android"
+  ],
+  "author": "Mukopaje Singogo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Mukopaje/smart-one-printer/issues"
+  },
+  "homepage": "https://github.com/Mukopaje/smart-one-printer#readme"
+}
