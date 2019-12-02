@@ -31,6 +31,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.util.TimeFormatException;
 import android.view.KeyEvent;
+import android.widget.Toast;
 
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
@@ -39,54 +40,59 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public boolean isFirstIn = true;
-	public boolean isInit = false;
-	public boolean LowBattery = false;
-    public  String langue;
-    
-    private EscPos mEscPos = null;
-    private Context context = null;
-    private Intent intent = null;
+
 /**
  * This class echoes a string called from JavaScript.
  */
 public class SmartOnePrinter extends CordovaPlugin {
 
+	public boolean isFirstIn = true;
+	public boolean isInit = false;
+	public boolean LowBattery = false;
+    public final String langue;
+    
+    private EscPos mEscPos = null;
+    private Context context = null;
+    private Intent intent = null;
+	public ProgressDialog dialog;
+
+	public static final String TAG = "SmartOne";
+
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-        if (action.equals("coolMethod")) {
-            String message = args.getString(0);
-            this.coolMethod(message, callbackContext);
+        if (action.equals("printerInit")) {
+             new PrinterAllDemoTask().execute();
             return true;
-        }
+		}
+        // } else if (action.equals("hasPrinter")) {
+        //     hasPrinter(callbackContext);
+        //     return true;
+        // } else if (action.equals("sendRAWData")) {
+        //     sendRAWData(data.getString(0), callbackContext);
+        //     return true;
+        // }
         return false;
-    }
-
-    private void coolMethod(String message, CallbackContext callbackContext) {
-        if (message != null && message.length() > 0) {
-            callbackContext.success(message);
-        } else {
-            callbackContext.error("Expected one non-empty string argument.");
-        }
     }
 
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
 
-        // Toast.makeText(webView.getContext(), "Initialization Statrted " + mIPosPrinterService, Toast.LENGTH_LONG).show();
+        Toast.makeText(webView.getContext(), "Initialization Statrted " + mEscPos, Toast.LENGTH_LONG).show();
         context = this.cordova.getActivity().getApplicationContext();
 
         // bitMapUtils = new BitmapUtils(applicationContext);
 
         intent = new Intent();
-        mEscPos = new EscPos(this);
+        mEscPos = new EscPos(context);
         IntentFilter pIntentFilter = new IntentFilter();
 		pIntentFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
 		context.registerReceiver(printReceive, pIntentFilter);		
         // intent.setPackage("com.iposprinter.iposprinterservice");
         // intent.setAction("com.iposprinter.iposprinterservice.IPosPrintService");
         // startService(intent);
+        Toast.makeText(webView.getContext(), "Initialization Ended " + mEscPos, Toast.LENGTH_LONG).show();
+
     }
 
     // Monitor the battery
@@ -110,9 +116,91 @@ public class SmartOnePrinter extends CordovaPlugin {
 					}
 				}
 			}
-
     };
+
+    public class PrinterAllDemoTask extends AsyncTask<Void, Void, String> {
+		@Override
+		protected void onPreExecute(){
+				if(LowBattery == false){
+				dialog.show();
+			}
+		};
+		
+		@Override
+		protected String doInBackground(Void... params){
+			byte[] printContent1 = null;
+			String s1 = null;
+			try {
+				printContent1 = strToByteArray(Order.printContent1,"UTF-8");
+			} catch (UnsupportedEncodingException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+			if(LowBattery == false){
+			try{
+				mEscPos.EscPosCommandExe(ByteOrder.initUTF8);
+				mEscPos.EscPosCommandExe(printContent1);
+				mEscPos.EscPosCommandExe(ByteOrder.walkpaper);
+				mEscPos.EscPosCommandExe(ByteOrder.printing_testbarcode);
+				mEscPos.EscPosCommandExe(ByteOrder.printing_qrcode);
+				mEscPos.EscPosCommandExe(ByteOrder.logo_bit_map2);
+			}catch (Exception e) {
+				e.printStackTrace();
+				Log.d(TAG, "Exception error ="+e);
+				s1 = e.toString();
+				}
+			}
+			return s1;	
+		}
+	}	
     
+	 public static byte[] strToByteArray(String str){
+        if (str == null) {
+            return null;
+        }       
+        byte[] byteArray = str.getBytes();       
+        return byteArray;
+    }
+    
+    public static byte[] strToByteArray(String str,String encodeStr) throws UnsupportedEncodingException  {
+        if (str == null) {
+            return null;
+        }
+        byte[] byteArray = null;
+        if(encodeStr.equals("IBM852")){
+        	byteArray = str.getBytes("IBM852");
+        }else if (encodeStr.equals("GB2312")) {
+        	byteArray = str.getBytes("GB2312");
+		}else if (encodeStr.equals("ISO-8859-1")) {
+        	byteArray = str.getBytes("ISO-8859-1");
+		}else if (encodeStr.equals("UTF-8")) {
+        	byteArray = str.getBytes("UTF-8");
+		}else {
+			byteArray = str.getBytes();
+		}        
+        return byteArray;
+    }
+    
+    public static String checkEncoding(String str){
+        if (str == null) {
+            return null;
+        }
+        String encodestr =null;
+        if(str.equals("1B7430")){
+        	encodestr = "UTF-8";
+        }else if(str.equals("1B7431")) {
+        	encodestr = "GB2312";
+		}else if(str.equals("1B7412")) {
+        	encodestr = "IBM852";
+		}
+		else if(str.equals("1B7417")) {
+        	encodestr = "ISO-8859-1";
+		}else {
+			encodestr = "UTF-8";
+		}
+        return encodestr;
+    }
+
     public void printerStatusStopListener() {
         // final PrinterStatusReceiver receiver = printerStatusReceiver;
         // receiver.stopReceiving();

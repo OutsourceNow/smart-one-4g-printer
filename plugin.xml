@@ -14,6 +14,8 @@ xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.a
 <config-file parent="/*" target="AndroidManifest.xml">
 </config-file>
 <source-file src="src/android/SmartOnePrinter.java" target-dir="src/cordova/plugin/smartoneprinter/SmartOnePrinter" />
+<source-file src="src/android/ByteOrder.java" target-dir="src/cordova/plugin/smartoneprinter/ByteOrder" />
+<source-file src="src/android/Order.java" target-dir="src/cordova/plugin/smartoneprinter/Order" />
 <lib-file src="src/android/libs/telposdk_for_escpos.jar" />
 <lib-file src="src/android/libs/telposdk.jar" />
 <lib-file src="src/android/libs/core-3_3_telpo.jar" />
