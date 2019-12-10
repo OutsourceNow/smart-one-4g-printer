@@ -3,12 +3,13 @@
 xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
 <name>SmartOnePrinter</name>
 <js-module name="SmartOnePrinter" src="www/SmartOnePrinter.js">
-<clobbers target="cordova.plugins.SmartOnePrinter" />
+<clobbers target="smartOnePrinter" />
 </js-module>
 <platform name="android">
 <config-file parent="/*" target="res/xml/config.xml">
 <feature name="SmartOnePrinter">
 <param name="android-package" value="cordova.plugin.smartoneprinter.SmartOnePrinter" />
+<param name="onload" value="true" />
 </feature>
 </config-file>
 <config-file parent="/*" target="AndroidManifest.xml">
@@ -16,9 +17,11 @@ xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.a
 <source-file src="src/android/SmartOnePrinter.java" target-dir="src/cordova/plugin/smartoneprinter/SmartOnePrinter" />
 <source-file src="src/android/ByteOrder.java" target-dir="src/cordova/plugin/smartoneprinter/ByteOrder" />
 <source-file src="src/android/Order.java" target-dir="src/cordova/plugin/smartoneprinter/Order" />
+<source-file src="src/android/PrinterStatusReceiver.java" target-dir="src/cordova/plugin/smartoneprinter/PrinterStatusReceiver" />
+<source-file src="src/android/utils/HandlerUtils.java" target-dir="src/cordova/plugin/smartoneprinter/utils/HandlerUtils" />
 <lib-file src="src/android/libs/telposdk_for_escpos.jar" />
 <lib-file src="src/android/libs/telposdk.jar" />
 <lib-file src="src/android/libs/core-3_3_telpo.jar" />
-<lib-file src="src/android/libs/android-support-v4.jar" />
+<!-- <lib-file src="src/android/libs/android-support-v4.jar" /> -->
 </platform>
 </plugin>

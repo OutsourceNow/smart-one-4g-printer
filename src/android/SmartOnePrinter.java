@@ -40,6 +40,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import cordova.plugin.smartoneprinter.PrinterStatusReceiver;
+
 
 /**
  * This class echoes a string called from JavaScript.
@@ -49,12 +51,13 @@ public class SmartOnePrinter extends CordovaPlugin {
 	public boolean isFirstIn = true;
 	public boolean isInit = false;
 	public boolean LowBattery = false;
-    public final String langue;
+    public String langue;
     
     private EscPos mEscPos = null;
     private Context context = null;
-    private Intent intent = null;
-	public ProgressDialog dialog;
+    public Intent intent = null;
+	public ProgressDialog dialog = null;
+	private PrinterStatusReceiver printerStatusReceiver = new PrinterStatusReceiver();
 
 	public static final String TAG = "SmartOne";
 
@@ -82,12 +85,13 @@ public class SmartOnePrinter extends CordovaPlugin {
         context = this.cordova.getActivity().getApplicationContext();
 
         // bitMapUtils = new BitmapUtils(applicationContext);
-
+		// dialog = new ProgressDialog(context);
         intent = new Intent();
-        mEscPos = new EscPos(context);
+		mEscPos = new EscPos(context);
+		
         IntentFilter pIntentFilter = new IntentFilter();
 		pIntentFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
-		context.registerReceiver(printReceive, pIntentFilter);		
+		context.registerReceiver(printerStatusReceiver, pIntentFilter);		
         // intent.setPackage("com.iposprinter.iposprinterservice");
         // intent.setAction("com.iposprinter.iposprinterservice.IPosPrintService");
         // startService(intent);
@@ -96,33 +100,35 @@ public class SmartOnePrinter extends CordovaPlugin {
     }
 
     // Monitor the battery
-	private final BroadcastReceiver printReceive = new BroadcastReceiver() {
-		@Override
-		public void onReceive() {
-			String action = intent.getAction();
-			if (action.equals(Intent.ACTION_BATTERY_CHANGED)) {
-				int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS,
-						BatteryManager.BATTERY_STATUS_NOT_CHARGING);
-				int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
-				int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, 0);
-					if (status != BatteryManager.BATTERY_STATUS_CHARGING) {
-						if (level * 5 <= scale) {
-							LowBattery = true;
-						} else {
-							LowBattery = false;
-						}
-					} else {
-						LowBattery = false;
-					}
-				}
-			}
-    };
+	// private final BroadcastReceiver printReceive = new BroadcastReceiver() {
+	// 	@Override
+	// 	public void onReceive() {
+	// 		String action = intent.getAction();
+	// 		if (action.equals(Intent.ACTION_BATTERY_CHANGED)) {
+	// 			int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS,
+	// 					BatteryManager.BATTERY_STATUS_NOT_CHARGING);
+	// 			int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
+	// 			int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, 0);
+	// 				if (status != BatteryManager.BATTERY_STATUS_CHARGING) {
+	// 					if (level * 5 <= scale) {
+	// 						LowBattery = true;
+	// 					} else {
+	// 						LowBattery = false;
+	// 					}
+	// 				} else {
+	// 					LowBattery = false;
+	// 				}
+	// 			}
+	// 		}
+    // };
 
     public class PrinterAllDemoTask extends AsyncTask<Void, Void, String> {
 		@Override
 		protected void onPreExecute(){
 				if(LowBattery == false){
-				dialog.show();
+				//dialog.setMessage("Printing, please wait.");
+				//dialog.show();
+				Toast.makeText(webView.getContext(), "Printing Please Wait... ", Toast.LENGTH_LONG).show();
 			}
 		};
 		
@@ -202,9 +208,9 @@ public class SmartOnePrinter extends CordovaPlugin {
     }
 
     public void printerStatusStopListener() {
-        // final PrinterStatusReceiver receiver = printerStatusReceiver;
-        // receiver.stopReceiving();
-        context.unregisterReceiver(printReceive);
+        final PrinterStatusReceiver receiver = printerStatusReceiver;
+         receiver.stopReceiving();
+        // context.unregisterReceiver(printReceive);
     }
  
 }
