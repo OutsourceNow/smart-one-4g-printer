@@ -9,6 +9,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.lang.System;
 
 import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaWebView;
@@ -55,6 +56,7 @@ public class SmartOnePrinter extends CordovaPlugin {
     
     private EscPos mEscPos = null;
     private Context context = null;
+	private Context tContext = null;
     public Intent intent = null;
 	public ProgressDialog dialog = null;
 	private PrinterStatusReceiver printerStatusReceiver = new PrinterStatusReceiver();
@@ -80,7 +82,7 @@ public class SmartOnePrinter extends CordovaPlugin {
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
-
+		tContext = webView.getContext();
         Toast.makeText(webView.getContext(), "Initialization Statrted " + mEscPos, Toast.LENGTH_LONG).show();
         context = this.cordova.getActivity().getApplicationContext();
 
@@ -126,8 +128,6 @@ public class SmartOnePrinter extends CordovaPlugin {
 		@Override
 		protected void onPreExecute(){
 				if(LowBattery == false){
-				//dialog.setMessage("Printing, please wait.");
-				//dialog.show();
 				Toast.makeText(webView.getContext(), "Printing Please Wait... ", Toast.LENGTH_LONG).show();
 			}
 		};
@@ -143,13 +143,14 @@ public class SmartOnePrinter extends CordovaPlugin {
 				e2.printStackTrace();
 			}
 			if(LowBattery == false){
-			try{
+			try {
+				System.out.println("Print instance  = "+mEscPos);
 				mEscPos.EscPosCommandExe(ByteOrder.initUTF8);
 				mEscPos.EscPosCommandExe(printContent1);
-				mEscPos.EscPosCommandExe(ByteOrder.walkpaper);
-				mEscPos.EscPosCommandExe(ByteOrder.printing_testbarcode);
-				mEscPos.EscPosCommandExe(ByteOrder.printing_qrcode);
-				mEscPos.EscPosCommandExe(ByteOrder.logo_bit_map2);
+				//mEscPos.EscPosCommandExe(ByteOrder.walkpaper);
+				//mEscPos.EscPosCommandExe(ByteOrder.printing_testbarcode);
+				// mEscPos.EscPosCommandExe(ByteOrder.printing_qrcode);
+				// mEscPos.EscPosCommandExe(ByteOrder.logo_bit_map2);
 			}catch (Exception e) {
 				e.printStackTrace();
 				Log.d(TAG, "Exception error ="+e);
