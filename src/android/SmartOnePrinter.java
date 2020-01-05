@@ -52,7 +52,13 @@ public class SmartOnePrinter extends CordovaPlugin {
 	public boolean isFirstIn = true;
 	public boolean isInit = false;
 	public boolean LowBattery = false;
+	public boolean hasLogo = false;
+	public boolean hasBarcode = false;
+	public boolean hasQRCode = false;
     public String langue;
+	public String ReceiptContent;
+	public String BarcodeData;
+	public String QRCodeData;
     
     private EscPos mEscPos = null;
     private Context context = null;
@@ -64,18 +70,23 @@ public class SmartOnePrinter extends CordovaPlugin {
 	public static final String TAG = "SmartOne";
 
     @Override
-    public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+    public boolean execute(String action, JSONArray data, CallbackContext callbackContext) throws JSONException {
         if (action.equals("printerInit")) {
              new PrinterAllDemoTask().execute();
             return true;
-		}
-        // } else if (action.equals("hasPrinter")) {
-        //     hasPrinter(callbackContext);
-        //     return true;
-        // } else if (action.equals("sendRAWData")) {
-        //     sendRAWData(data.getString(0), callbackContext);
-        //     return true;
-        // }
+		} else if (action.equals("printString")) {
+            ReceiptContent = data.getString(0);
+			 new PrintReceipt().execute();
+            return true;
+        } else if (action.equals("printBarCode")) {
+        	BarcodeData = data.getString(0);
+			 new PrintBarcode().execute();
+        return true;
+        } else if (action.equals("printQRCode")) {
+        	QRCodeData = data.getString(0);
+			 new PrintQRCode().execute();
+        return true;
+        }
         return false;
     }
 
@@ -83,7 +94,6 @@ public class SmartOnePrinter extends CordovaPlugin {
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
 		tContext = webView.getContext();
-        Toast.makeText(webView.getContext(), "Initialization Statrted " + mEscPos, Toast.LENGTH_LONG).show();
         context = this.cordova.getActivity().getApplicationContext();
 
         // bitMapUtils = new BitmapUtils(applicationContext);
@@ -94,35 +104,118 @@ public class SmartOnePrinter extends CordovaPlugin {
         IntentFilter pIntentFilter = new IntentFilter();
 		pIntentFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
 		context.registerReceiver(printerStatusReceiver, pIntentFilter);		
-        // intent.setPackage("com.iposprinter.iposprinterservice");
-        // intent.setAction("com.iposprinter.iposprinterservice.IPosPrintService");
-        // startService(intent);
-        Toast.makeText(webView.getContext(), "Initialization Ended " + mEscPos, Toast.LENGTH_LONG).show();
-
     }
 
-    // Monitor the battery
-	// private final BroadcastReceiver printReceive = new BroadcastReceiver() {
-	// 	@Override
-	// 	public void onReceive() {
-	// 		String action = intent.getAction();
-	// 		if (action.equals(Intent.ACTION_BATTERY_CHANGED)) {
-	// 			int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS,
-	// 					BatteryManager.BATTERY_STATUS_NOT_CHARGING);
-	// 			int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
-	// 			int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, 0);
-	// 				if (status != BatteryManager.BATTERY_STATUS_CHARGING) {
-	// 					if (level * 5 <= scale) {
-	// 						LowBattery = true;
-	// 					} else {
-	// 						LowBattery = false;
-	// 					}
-	// 				} else {
-	// 					LowBattery = false;
-	// 				}
-	// 			}
-	// 		}
-    // };
+ public class PrintReceipt extends AsyncTask<Void, Void, String> {
+		@Override
+		protected void onPreExecute(){
+				if(LowBattery == false){
+				Toast.makeText(webView.getContext(), "Printing Please Wait... ", Toast.LENGTH_LONG).show();
+			}
+		};
+		
+		@Override
+		protected String doInBackground(Void... params){
+			byte[] printContent1 = null;
+			String s1 = null;
+			try {
+				printContent1 = strToByteArray(ReceiptContent,"UTF-8");
+			} catch (UnsupportedEncodingException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+			if(LowBattery == false){
+			try {			
+				// mEscPos.EscPosCommandExe(ByteOrder.initUTF8);				
+				if(hasLogo) {
+				mEscPos.EscPosCommandExe(ByteOrder.logo_bit_map2);
+				}
+				System.out.println("content print started");
+				mEscPos.EscPosCommandExe(printContent1);
+				System.out.println("content print finished");
+				mEscPos.EscPosCommandExe(ByteOrder.walkpaper);
+				if(hasBarcode) {
+				mEscPos.EscPosCommandExe(ByteOrder.printing_testbarcode);
+				}
+				if(hasQRCode) {
+				mEscPos.EscPosCommandExe(ByteOrder.printing_qrcode);
+				}
+				
+			}catch (Exception e) {
+				e.printStackTrace();
+				Log.d(TAG, "Exception error ="+e);
+				s1 = e.toString();
+				}
+			}
+			return s1;	
+		}
+	}	
+
+	 public class PrintBarcode extends AsyncTask<Void, Void, String> {
+		@Override
+		protected void onPreExecute(){
+				if(LowBattery == false){
+				Toast.makeText(webView.getContext(), "Printing Barcode... ", Toast.LENGTH_LONG).show();
+			}
+		};
+		
+		@Override
+		protected String doInBackground(Void... params){
+			byte[] printBarcodeContent = null;
+			String s1 = null;
+			try {
+				printBarcodeContent = strToByteArray(BarcodeData,"UTF-8");
+			} catch (UnsupportedEncodingException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+			if(LowBattery == false){
+			try {
+				
+				mEscPos.EscPosCommandExe(printBarcodeContent);
+				
+			}catch (Exception e) {
+				e.printStackTrace();
+				Log.d(TAG, "Exception error ="+e);
+				s1 = e.toString();
+				}
+			}
+			return s1;	
+		}
+	}	
+   
+   public class PrintQRCode extends AsyncTask<Void, Void, String> {
+		@Override
+		protected void onPreExecute(){
+				if(LowBattery == false){
+				Toast.makeText(webView.getContext(), "Printing QRCode... ", Toast.LENGTH_LONG).show();
+			}
+		};
+		
+		@Override
+		protected String doInBackground(Void... params){
+			byte[] printQRCodeContent = null;
+			String s1 = null;
+			try {
+				printQRCodeContent = strToByteArray(QRCodeData,"UTF-8");
+			} catch (UnsupportedEncodingException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+			if(LowBattery == false){
+			try {
+				
+				mEscPos.EscPosCommandExe(printQRCodeContent);
+				
+			}catch (Exception e) {
+				e.printStackTrace();
+				Log.d(TAG, "Exception error ="+e);
+				s1 = e.toString();
+				}
+			}
+			return s1;	
+		}
+	}	
 
     public class PrinterAllDemoTask extends AsyncTask<Void, Void, String> {
 		@Override
@@ -147,10 +240,10 @@ public class SmartOnePrinter extends CordovaPlugin {
 				System.out.println("Print instance  = "+mEscPos);
 				mEscPos.EscPosCommandExe(ByteOrder.initUTF8);
 				mEscPos.EscPosCommandExe(printContent1);
-				//mEscPos.EscPosCommandExe(ByteOrder.walkpaper);
-				//mEscPos.EscPosCommandExe(ByteOrder.printing_testbarcode);
-				// mEscPos.EscPosCommandExe(ByteOrder.printing_qrcode);
-				// mEscPos.EscPosCommandExe(ByteOrder.logo_bit_map2);
+				mEscPos.EscPosCommandExe(ByteOrder.walkpaper);
+				mEscPos.EscPosCommandExe(ByteOrder.printing_testbarcode);
+				mEscPos.EscPosCommandExe(ByteOrder.printing_qrcode);
+				mEscPos.EscPosCommandExe(ByteOrder.logo_bit_map2);
 			}catch (Exception e) {
 				e.printStackTrace();
 				Log.d(TAG, "Exception error ="+e);
