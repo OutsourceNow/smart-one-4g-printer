@@ -5,8 +5,8 @@ module.exports = {
     printerInit: function (resolve, reject) {
         exec(resolve, reject, "SmartOnePrinter", "printerInit", []);
     },
-    printString: function (text, resolve, reject) {
-        exec(resolve, reject, "SmartOnePrinter", "printString", [text]);
+    printString: function (text, qrCodeData, resolve, reject) {
+        exec(resolve, reject, "SmartOnePrinter", "printString", [text, qrCodeData]);
     },
      printBitmap: function (base64Data, width, height, resolve, reject) {
         exec(resolve, reject, "SmartOnePrinter", "printBitmap", [base64Data, width, height]);
