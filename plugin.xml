@@ -23,7 +23,6 @@ xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.a
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
-<!-- <framework src="src/android/*.gradle" custom="true" type="gradleReference" /> -->
 <source-file src="src/android/SmartOnePrinter.java" target-dir="src/cordova/plugin/smartoneprinter/SmartOnePrinter" />
 <source-file src="src/android/ByteOrder.java" target-dir="src/cordova/plugin/smartoneprinter/ByteOrder" />
 <source-file src="src/android/PrinterData.java" target-dir="src/cordova/plugin/smartoneprinter/PrinterData" />
@@ -33,40 +32,8 @@ xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.a
 <source-file src="src/android/utils/ByteUtil.java" target-dir="src/cordova/plugin/smartoneprinter/utils/ByteUtil" />
 <source-file src="src/android/utils/HandlerUtils.java" target-dir="src/cordova/plugin/smartoneprinter/utils/HandlerUtils" />
 
-<!-- <source-file src="src/android/libs/armeabi/libsystem_util.so" target-dir="app/src/main/jniLibs/armeabi/" />
-<source-file src="src/android/libs/armeabi/libcommon_printer.so" target-dir="app/src/main/jniLibs/armeabi/" />
-<source-file src="src/android/libs/armeabi/libcommon_printer_48.so" target-dir="app/src/main/jniLibs/armeabi/" />
-<source-file src="src/android/libs/armeabi/libcommon_printer_581.so" target-dir="app/src/main/jniLibs/armeabi/" />
-<source-file src="src/android/libs/armeabi/libcommon_serial.so" target-dir="app/src/main/jniLibs/armeabi/" />
-<source-file src="src/android/libs/armeabi/libAlUSB.so" target-dir="app/src/main/jniLibs/armeabi/" />
-<source-file src="src/android/libs/armeabi/libusb_util.so" target-dir="app/src/main/jniLibs/armeabi/" />
-<source-file src="src/android/libs/armeabi/libserial_port.so" target-dir="app/src/main/jniLibs/armeabi/" /> -->
-
-<!-- <source-file src="src/android/libs/arm64-v8a/libsystem_util.so" target-dir="app/src/main/jniLibs/arm64-v8a/" />
-<source-file src="src/android/libs/arm64-v8a/libcommon_printer.so" target-dir="app/src/main/jniLibs/arm64-v8a/" />
-<source-file src="src/android/libs/arm64-v8a/libcommon_printer_48.so" target-dir="app/src/main/jniLibs/arm64-v8a/" />
-<source-file src="src/android/libs/arm64-v8a/libcommon_printer_581.so" target-dir="app/src/main/jniLibs/arm64-v8a/" />
-<source-file src="src/android/libs/arm64-v8a/libcommon_serial.so" target-dir="app/src/main/jniLibs/arm64-v8a/" />
-<source-file src="src/android/libs/arm64-v8a/libAlUSB.so" target-dir="app/src/main/jniLibs/arm64-v8a/" />
-<source-file src="src/android/libs/arm64-v8a/libusb_util.so" target-dir="app/src/main/jniLibs/arm64-v8a/" />
-<source-file src="src/android/libs/arm64-v8a/libserial_port.so" target-dir="app/src/main/jniLibs/arm64-v8a/" /> -->
-
-<!-- <source-file src="src/android/libs/armeabi-v7a/libsystem_util.so" target-dir="app/src/main/jniLibs/armeabi-v7a/" />
-<source-file src="src/android/libs/armeabi-v7a/libcommon_printer.so" target-dir="app/src/main/jniLibs/armeabi-v7a/" />
-<source-file src="src/android/libs/armeabi-v7a/libcommon_printer_48.so" target-dir="app/src/main/jniLibs/armeabi-v7a/" />
-<source-file src="src/android/libs/armeabi-v7a/libcommon_printer_581.so" target-dir="app/src/main/jniLibs/armeabi-v7a/" />
-<source-file src="src/android/libs/armeabi-v7a/libcommon_serial.so" target-dir="app/src/main/jniLibs/armeabi-v7a/" />
-<source-file src="src/android/libs/armeabi-v7a/libAlUSB.so" target-dir="app/src/main/jniLibs/armeabi-v7a/" />
-<source-file src="src/android/libs/armeabi-v7a/libusb_util.so" target-dir="app/src/main/jniLibs/armeabi-v7a/" />
-<source-file src="src/android/libs/armeabi-v7a/libserial_port.so" target-dir="app/src/main/jniLibs/armeabi-v7a/" /> -->
-<!-- <source-file src="src/android/libs/armeabi/libdecode.so" target-dir="app/src/main/jniLibs/armeabi/" /> -->
- <!-- <source-file src="src/android/libs/armeabi-v7a/libsystem_util.so" target-dir="app/src/main/jniLibs/armeabi-v7a/" />
- <source-file src="src/android/libs/arm64-v8a/libsystem_util.so" target-dir="app/src/main/jniLibs/arm64-v8a/" /> -->
-
 <lib-file src="src/android/libs/onelib.aar" />
 <framework src="src/android/onelib.gradle" custom="true" type="gradleReference" />
-<!-- <lib-file src="src/android/libs/core-3_3.jar" /> -->
 
-<!-- <lib-file src="src/android/libs/android-support-v4.jar" /> -->
 </platform>
 </plugin>
